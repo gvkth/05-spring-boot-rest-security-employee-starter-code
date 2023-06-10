@@ -14,12 +14,27 @@ import javax.sql.DataSource;
 @Configuration
 public class DemoSecurityConfig {
 
+    //version 3: custom DB structures
+    @Bean UserDetailsManager userDetailsManager(DataSource dataSource){
+        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+        //define query to retrieve a user by username
+        jdbcUserDetailsManager.setUsersByUsernameQuery(
+                "select user_id, pw, active from members where user_id=?"
+        );
+        //define query to retrieve the authorities/roles by username
+        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery(
+                "select user_id, role from roles where user_id=?"
+        );
+        return jdbcUserDetailsManager;
+    }
+
+
     //adđ support for JDBC ... no more hardcoded users
     //tell Spring Security to use JDBC authentication with our data source
-    @Bean
+    /*@Bean
     public UserDetailsManager userDetailsManager(DataSource dataSource){
         return new JdbcUserDetailsManager(dataSource);
-    }
+    }*/
 
 
     /*@Bean
